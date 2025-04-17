@@ -4,9 +4,10 @@ import shutil
 # Function to check if a line matches the specified pattern
 def check_line(line):
     # Regular expression to match the pattern
-    pattern = r'.*T[4-8]_.*@[1-4]$'
+    pattern = r'.*T[4-8]_.*@[1-4].*'
     
-    # Check if the line matches the pattern
+    # Check if the line matches the pattern   
+
     if re.match(pattern, line.strip()):
         return True
     return False
@@ -19,11 +20,16 @@ def create_backup(input_file):
 
 def process_file(input_file, output_file):
     # Open the input file and output file
+    last_line=None
     with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
         for line in infile:
             trimmed_line = line.strip()  # Trim leading/trailing whitespace
             if check_line(trimmed_line):  # Keep only lines that match the pattern
-                outfile.write(trimmed_line + '\n')
+                cleaned_line = re.sub(r'\b(?:[0-9]{1,4}|10000):|T[4-8]_|\@[1-4]', '', trimmed_line)
+                cleaned_line=re.sub(r'\s+', '', cleaned_line.strip())
+                if cleaned_line != last_line:
+                    outfile.write(cleaned_line + '\n')
+                    last_line = cleaned_line
             else:
                 print(f"Deleted line: {trimmed_line}")  # Print deleted lines for reference
 
@@ -32,7 +38,7 @@ input_file = 'C:/TEMP/dictionary.txt'  # Replace with your actual file path
 output_file = 'C:/TEMP/dictionary2.txt'
 
 # Create a backup before modifying the file
-create_backup(input_file)
+#create_backup(input_file)
 
 # Run the processing function
 process_file(input_file, output_file)
