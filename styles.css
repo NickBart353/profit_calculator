@@ -1,0 +1,59 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    background-color: #4e4e4e;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff;
+  }
+  
+  /* Links */
+  a {
+    color: #64b5f6;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Buttons */
+  button {
+    background-color: #1f1f1f;
+    color: #ffffff;
+    border: 1px solid #333;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  button:hover {
+    background-color: #333;
+  }
+  
+  /* Containers */
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Simple card */
+  .card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  

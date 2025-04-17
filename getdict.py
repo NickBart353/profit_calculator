@@ -1,0 +1,40 @@
+import re
+import shutil
+
+# Function to check if a line matches the specified pattern
+def check_line(line):
+    # Regular expression to match the pattern
+    pattern = r'.*T[4-8]_.*@[1-4]$'
+    
+    # Check if the line matches the pattern
+    if re.match(pattern, line.strip()):
+        return True
+    return False
+
+def create_backup(input_file):
+    # Create a backup of the input file
+    backup_file = 'C:/TEMP/dictionary_backup.txt'
+    shutil.copy(input_file, backup_file)
+    print(f"Backup created: {backup_file}")
+
+def process_file(input_file, output_file):
+    # Open the input file and output file
+    with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
+        for line in infile:
+            trimmed_line = line.strip()  # Trim leading/trailing whitespace
+            if check_line(trimmed_line):  # Keep only lines that match the pattern
+                outfile.write(trimmed_line + '\n')
+            else:
+                print(f"Deleted line: {trimmed_line}")  # Print deleted lines for reference
+
+# Define input and output file paths
+input_file = 'C:/TEMP/dictionary.txt'  # Replace with your actual file path
+output_file = 'C:/TEMP/dictionary2.txt'
+
+# Create a backup before modifying the file
+create_backup(input_file)
+
+# Run the processing function
+process_file(input_file, output_file)
+
+print(f"Updated file saved as {output_file}")
