@@ -19,14 +19,14 @@
         });
       }
 
-    const item_str = [
+   /* const item_str = [
         "T4_BAG"//,T5_BAG,T6_BAG,T7_BAG,T8_BAG"
     ];
 
     const location_str = [
         "caerleon"//,bridgewatch"
     ]
-OFF_SHIELD_HELL
+
     url = `https://europe.albion-online-data.com/api/v2/stats/prices/${item_str}.json?locations=${location_str}&qualities=1` ;
     //https://europe.albion-online-data.com/api/v2/stats/prices/T4_OFF_SHIELD_HELL.json?locations=bridgewatch,caerleon&qualities=1
     const item = `https://render.albiononline.com/v1/item/${item}.png`;
@@ -47,7 +47,7 @@ OFF_SHIELD_HELL
 
       .catch(error => {
         console.error("Fetch error:", error);
-      });
+      });*/
   
 
 
@@ -79,21 +79,27 @@ function loadCityToCaerleon(){
       let stringBuilder4 = "";
       let stringBuilder5 = "";
       let index = 0;
+      let caerleon = [];
+      let other = [];
+      const profitTable = document.getElementById("profitTable");
+      const tbody = document.querySelector("#profitTable tbody");
+
+      tbody.innerHTML = '';
             
       Object.entries(myBigDictionary ).forEach(([key, val]) => {
-        if (index<100){
+        if (index<20){
           stringBuilder1 += String(tiersValue) + String(val) + ",";
         }
-        if (index<200){
+        if (index<40 && index>20){
           stringBuilder2 += String(tiersValue) + String(val) + ",";
         }
-        if (index<300){
+        if (index<60 && index>40){
           stringBuilder3 += String(tiersValue) + String(val) + ",";
         }
-        if (index<400){
+        if (index<80 && index>60){
           stringBuilder4 += String(tiersValue) + String(val) + ",";
         }    
-        if (index<500){
+        if (index<100 && index>80){
           stringBuilder5 += String(tiersValue) + String(val) + ",";
         }        
           index++;
@@ -114,14 +120,72 @@ function loadCityToCaerleon(){
       if (stringBuilder5.endsWith(",")) {
         stringBuilder5 = stringBuilder5.slice(0, -1); 
       }
+      
+      urls = [
+        `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder1}.json?locations=${cityValue},caerleon&qualities=1`,
+        `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder2}.json?locations=${cityValue},caerleon&qualities=1` ,
+        `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder3}.json?locations=${cityValue},caerleon&qualities=1` ,
+        `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder4}.json?locations=${cityValue},caerleon&qualities=1` ,
+        `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder5}.json?locations=${cityValue},caerleon&qualities=1` 
+      ];
+      Promise.all(
+        urls.map(url =>
+          fetch(url)
+            .then(res => {
+              if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+              return res.json();
+            })
+        )
+      )
+      .then(allData => {
+        console.log(allData.length);
+        allData.forEach((data,index)=>{
+          if(data[index].city == "Caerleon"){
+            caerleon.push(data);
+          }else{
+            other.push(data);
+          }
+        });
 
-      url1 = `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder1}.json?locations=${cityValue},caerleon&qualities=1` ;
-      url2 = `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder2}.json?locations=${cityValue},caerleon&qualities=1` ;
-      url3 = `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder3}.json?locations=${cityValue},caerleon&qualities=1` ;
-      url4 = `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder4}.json?locations=${cityValue},caerleon&qualities=1` ;
-      url5 = `https://europe.albion-online-data.com/api/v2/stats/prices/${stringBuilder5}.json?locations=${cityValue},caerleon&qualities=1` ;
+        other.forEach((otherItem,index)=>{          
+          caerleon.forEach((caerItem,caerIndex)=> {
+            //if(otherItem[index].item_id == caerItem[caerIndex].item_id){
 
-      listProfit.textContent = url;
+              const row = document.createElement("tr");
+
+              const itemCell = document.createElement("td");
+              itemCell.textContent = otherItem[index].item_id;
+                        
+              const nameCell = document.createElement("td");
+              nameCell.textContent = tiersValue;
+          
+              const cityCell = document.createElement("td");
+              cityCell.textContent = cityValue;
+
+              const profitCell = document.createElement("td");
+              profitCell.textContent = caerItem[caerIndex].sell_price_min - otherItem[index].buy_price_min;
+
+              const minBuy = document.createElement("td");
+              minBuy.textContent = otherItem[index].buy_price_min;
+
+              const maxSell = document.createElement("td");
+              maxSell.textContent = caerItem[caerIndex].sell_price_min;
+
+              row.appendChild(itemCell);
+              row.appendChild(nameCell);
+              row.appendChild(cityCell);
+              row.appendChild(profitCell);
+              row.appendChild(minBuy);
+              row.appendChild(maxSell);
+
+              tbody.appendChild(row);
+            //  return;
+           // }
+          });
+        });
+
+
+        //listProfit.textContent = data1[0].city;
     });
-  
+  });
 }
