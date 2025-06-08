@@ -1,0 +1,9 @@
+{
+    "java.project.sourcePaths": [
+        "sqlstuff"
+    ],
+    "java.project.referencedLibraries": [
+        "c:\\Git\\profit_calculator\\lib\\json-20230227.jar",
+        "c:\\Git\\profit_calculator\\lib\\sqlite-jdbc-3.42.0.0.jar"
+    ]
+}
