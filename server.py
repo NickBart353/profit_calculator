@@ -9,7 +9,17 @@ CORS(app)
 def get_data():
     conn = sqlite3.connect("Albion_Calc_Data.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM [Values] ORDER BY value DESC LIMIT 1000")
+    cursor.execute("""select
+        (select tech_name from Tiers where id = tier_id) as Tier,
+        (select display_name from Items where id = items_id) as Item,
+        (select display_name from Cities where id = from_city_id) as from_city,
+        (select display_name from Cities where id = to_city_id) as to_city,
+        value,
+        buy_price,
+        sell_price,
+        last_updated
+
+        FROM [Values] order by value desc LIMIT 1000;""")
     rows = cursor.fetchall()
     conn.close()
     return jsonify(rows)

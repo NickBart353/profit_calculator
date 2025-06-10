@@ -1,60 +1,237 @@
-/* Reset and base styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial;
+  background-color: #4D4D4D;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  text-align: center; /* zentriert das Bild horizontal */
+  padding: 2em 0;
+}
+
+.image-container img {
+  max-width: 30%;
+  max-height: 30%;
+  height: auto;
+  display: inline-block;
+}
+
+.text-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #f0db3e;
+  background-color: rgba(41, 41, 41, 0.7); /* optionaler Hintergrund */
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .text-overlay {
+    font-size: 1.2rem;
+    padding: 0.3em 0.6em;
   }
+}
+.table-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* Der Container, der wirklich scrollt */
+.table-scroll {
+  max-height: 450px;
+  overflow-y: auto;
+  overflow-x: auto;
+  width: 85%;
+}
+
+/* Tabelle wie erwartet */
+#dataTable {
+  border-collapse: separate;
+  table-layout: fixed;
+  width: 100%;
+  min-width: 600px;
+}
+
+/* Sticky Header */
+#dataTable thead th {
+  position: sticky;
+  top: 0;
+  background-color: #333;
+  color: rgb(223, 223, 223);
+  z-index: 2;
+  padding: 0.5em;
+  text-align: center;
+  border: 1px solid #4D4D4D;
+  border-bottom: 2px solid #4D4D4D;
+}
+
+#dataTable thead tr {
+  top: 0;
+  background-color: #4D4D4D;
+  z-index: 1;
+}
+
+/* Tabelleninhalt */
+#dataTable td {
+  padding: 0.5em;
+  border: 1px solid #4D4D4D;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  color: rgb(223, 223, 223);
+}
+
+/* Optional: Zebra-Style für Zeilen */
+#dataTable tr:nth-child(even) {
+  background-color: #414141;
+}
+
+/* Spaltenbreiten individuell anpassen */
+.col-tier    { width: 45px; }
+.col-name    { width: 130px; }
+.col-from    { width: 90px; }
+.col-to      { width: 90px; }
+.col-return  { width: 80px; }
+.col-buy     { width: 80px; }
+.col-sell    { width: 80px; }
+.col-updated { width: 160px; }
+
+/* Erste Zelle links oben */
+#dataTable thead tr:first-child th:first-child {
+  border-top-left-radius: 12px;
+}
+
+/* Erste Zelle rechts oben */
+#dataTable thead tr:first-child th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* Unterste linke Zelle */
+#dataTable tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+/* Unterste rechte Zelle */
+#dataTable tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+} 
+
+.table-with-checkboxes {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 2em;
+  margin: 2em auto;
+  flex-wrap: nowrap; /* ❗ kein Zeilenumbruch */
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.checkbox-list {
+
+  flex-shrink: 0;
+  background-color: #313131;
+  padding: 1em;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.checkbox-list label {
+  margin-bottom: 0.5em;
+}
+
+/* Container für die beiden Checkbox-Listen */
+.checkbox-column {
+  display: flex;
+  flex-direction: column; /* ❗ untereinander */
+  gap: 1em;
+  min-width: 160px;
+  margin-left: 20px;
+}
+
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1rem;
+  color: rgb(223, 223, 223);
+}
+
+.custom-checkbox input {
+  display: none; /* versteckt die echte Checkbox */
+}
+
+.custom-checkbox .checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #8B1E3F;
+  border-radius: 4px;
+  margin-right: 0.5em;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.custom-checkbox input:checked + .checkmark {
+  background-color: #8B1E3F;
+}
+
+.custom-checkbox .checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid rgb(223, 223, 223);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-checkbox input:checked + .checkmark::after {
+  display: block;
+}
+
+.content {
+  flex: 1; /* nimmt den verfügbaren Platz zwischen header und footer */
+  padding-bottom: 60px; /* ❗Platz für den Footer, gleiche Höhe wie .sticky-footer */
+}
+
+.sticky-footer {
+  position: sticky;
+  bottom: 0;
+  height: 40px;
+  background-color: #8B1E3F;
+  color: white;
+  text-align: right;
+  padding-right: 10px;
+  line-height: 40px;
+  font-size: 0.9rem;
+  z-index: 10;
   
-  body {
-    background-color: #707070;
-    color: #4e4e4e;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    padding: 20px;
-  }
-  
-  /* Headings */
-  h1, h2, h3, h4, h5, h6 {
-    color: #242424;
-    text-align: center;
-  }
-  
-  /* Links */
-  a {
-    color: #64b5f6;
-    text-decoration: none;
-  }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Buttons */
-  button {
-    background-color: #1f1f1f;
-    color: #ffffff;
-    border: 1px solid #333;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  button:hover {
-    background-color: #333;
-  }
-  
-  /* Containers */
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  /* Simple card */
-  .card {
-    background-color: #1e1e1e;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  }
-  
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #8B1E3F;
+  color: rgb(223, 223, 223);
+  text-align: center;
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.3);
+}

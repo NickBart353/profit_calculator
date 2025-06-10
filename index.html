@@ -2,43 +2,165 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calc</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Nogg's poop Calculator</h1>
-    <img src="gold_poop - Kopie.png" width="500" height="600">
-    <pre id="output"></pre>    
 
-    <input type="checkbox" id="Brecilien1" value="Bike">
-    <label for="vehicle1"> Brecilien</label><br>
-    <input type="checkbox" id="Caerleon" value="Bike">
-    <label for="vehicle1"> Caerleon</label><br>
-    <input type="checkbox" id="Fort_Sterling" value="Bike"> 
-    <label for="vehicle1"> Fort Sterling</label><br>
-    <input type="checkbox" id="Lymhurst" value="Bike">       
-    <label for="vehicle1"> Lymhurst</label><br>
-    <input type="checkbox" id="Martlock" value="Bike">
-    <label for="vehicle1"> Martlock</label><br>
-    <input type="checkbox" id="Thetford" value="Bike">
-    <label for="vehicle1"> Thetford</label><br><br><br>
-
-
-
-
-
-    <table border="1" id="dataTable">
-        <tr>
-            <th>Tier</th>
-            <th>Name</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Return</th>
-            <th>Buy Price</th>
-            <th>Sell Price</th>
-            <th>Last Updated</th>
-        </tr>
-    </table>
+    <div class="image-container">
+        <img src="gold_poop - Kopie.png" alt="Beschreibung des Bildes" />
+        <div class="text-overlay">Nogg's poopy Calculator</div>
+    </div>  
+    <div class="content">
+        <div class="table-with-checkboxes">
+            <!-- Linke Seite: Checkbox-Liste -->
+            <div class="checkbox-column">
+                <div class="checkbox-list">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Brecilien0"
+                        value="Brecilien0"
+                        />
+                        <span class="checkmark"></span>
+                        Brecilien
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Bridgewatch0"
+                        value="Bridgewatch0"
+                        />
+                        <span class="checkmark"></span>
+                        Bridgewatch
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Caerleon0"
+                        value="Caerleon0"
+                        />
+                        <span class="checkmark"></span>
+                        Caerleon
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Fort Sterling0"
+                        value="Fort Sterling0"
+                        />
+                        <span class="checkmark"></span>
+                        Fort Sterling
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Lymhurst0"
+                        value="Lymhurst0"
+                        />
+                        <span class="checkmark"></span>
+                        Lymhurst
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Martlock0"
+                        value="Martlock0"
+                        />
+                        <span class="checkmark"></span>
+                        Martlock
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox"  
+                        id="Thetford1"
+                        value="Thetford1"
+                        />
+                        <span class="checkmark"></span>
+                        Thetford
+                    </label>
+                </div>
+                <div class="checkbox-list">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Brecilien1"
+                        value="Brecilien1"
+                        />
+                        <span class="checkmark"></span>
+                        Brecilien
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Bridgewatch1"
+                        value="Bridgewatch1"
+                        />
+                        <span class="checkmark"></span>
+                        Bridgewatch
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Caerleon1"
+                        value="Caerleon1"
+                        />
+                        <span class="checkmark"></span>
+                        Caerleon
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Fort Sterling1"
+                        value="Fort Sterling1"
+                        />
+                        <span class="checkmark"></span>
+                        Fort Sterling
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Lymhurst1"
+                        value="Lymhurst1"
+                        />
+                        <span class="checkmark"></span>
+                        Lymhurst
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Martlock1"
+                        value="Martlock1"
+                        />
+                        <span class="checkmark"></span>
+                        Martlock
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" 
+                        id="Thetford1"
+                        value="Thetford1"
+                        />
+                        <span class="checkmark"></span>
+                        Thetford
+                    </label>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <div class="table-scroll">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th class="col-tier">Tier</th>
+                                <th class="col-name">Name</th>
+                                <th class="col-from">From</th>
+                                <th class="col-to">To</th>
+                                <th class="col-return">Return</th>
+                                <th class="col-buy">Buy Price</th>
+                                <th class="col-sell">Sell Price</th>
+                                <th class="col-updated">Last Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Hier wird automatisch befüllt -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <footer class="sticky-footer">
+            © 2025 Nogg's poopy Calculator
+        </footer>
+    </div>
 
     <script src="scripts.js"></script>
 </body>
