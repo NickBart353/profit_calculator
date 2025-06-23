@@ -17,7 +17,8 @@ def get_data():
         value,
         buy_price,
         sell_price,
-        last_updated
+        last_updated,
+        (select display_color from Enchantments where id = rarity_id) as Enchantment
 
         FROM [Values] order by value desc LIMIT 1000;""")
     rows = cursor.fetchall()

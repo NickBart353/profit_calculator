@@ -80,86 +80,126 @@ public class Main{
             // 4. HTTP Request senden
             HttpClient client = HttpClient.newHttpClient();
             for (Item item : items) {
+                ArrayList<PreparedStatement> statementList = new ArrayList<>();
+                ArrayList<Value> values_to_add = new ArrayList<>();
                 if (!item.get_is_completed()){
+                    TimeUnit.SECONDS.sleep(1);
+                    String item_builder = "";
                     for(Tier tier : tiers){
                         for(Enchantment enchantment : enchantments){                        
-                            String item_builder = "";
-                            TimeUnit.SECONDS.sleep(1);
-                            item_builder = item_builder + tier.getTech_name() + "_" + item.getTech_name() + enchantment.getHtmltext();
+                            item_builder = item_builder + tier.getTech_name() + "_" + item.getTech_name() + enchantment.getHtmltext()+",";
+                        }
+                    }
 
-                            HttpRequest request = HttpRequest.newBuilder()
-                                .uri(URI.create("https://europe.albion-online-data.com/api/v2/stats/prices/" + item_builder + "?locations=bridgewatch,caerleon,fort%20sterling,martlock,brecilien,thetford,lymhurst&qualities=1"))
-                                .header("Accept-Encoding", "gzip, deflate")
-                                .GET()
-                                .build();
-                            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-                            byte[] responseBody = response.body();
-                            String decompressed = "";
+                    HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("https://europe.albion-online-data.com/api/v2/stats/prices/" + item_builder + "?locations=bridgewatch,caerleon,fort%20sterling,martlock,brecilien,thetford,lymhurst&qualities=1"))
+                        .header("Accept-Encoding", "gzip, deflate")
+                        .GET()
+                        .build();
+                    HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                    byte[] responseBody = response.body();
+                    String decompressed = "";
 
-                            if ("gzip".equalsIgnoreCase(response.headers().firstValue("Content-Encoding").orElse(""))) {
-                                // decompress gzip response
-                                try (java.util.zip.GZIPInputStream gis = new java.util.zip.GZIPInputStream(new java.io.ByteArrayInputStream(responseBody))) {
-                                    decompressed = new String(gis.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-                                    //System.out.println("Successful GET!");
-                                }
-                            }
-                            JSONArray jsonArray = new JSONArray(decompressed);    
+                    if ("gzip".equalsIgnoreCase(response.headers().firstValue("Content-Encoding").orElse(""))) {
+                        // decompress gzip response
+                        try (java.util.zip.GZIPInputStream gis = new java.util.zip.GZIPInputStream(new java.io.ByteArrayInputStream(responseBody))) {
+                            decompressed = new String(gis.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                        }
+                    }
+                    JSONArray jsonArray = new JSONArray(decompressed);    
 
-                            for (int i = 0; i < jsonArray.length(); i++) {      
-                                JSONObject from_city_object = jsonArray.getJSONObject(i);  
-                                String from_city = from_city_object.getString("city");
-                                Double from_city_price = from_city_object.getDouble("sell_price_min");
+                    ArrayList<Value> tempVals = new ArrayList<>();
 
-                                for (int j = 0; j < jsonArray.length(); j++) {  
-                                    JSONObject to_city_object = jsonArray.getJSONObject(j);
-                                    String to_city = to_city_object.getString("city");     
-                                    
-                                    if (!from_city.equals(to_city)) {
-                                        
-                                        String tempStr = to_city_object.getString("item_id");
-                                        String item_name;
-                                        String item_enchant = "";
+                    for (int i = 0; i < jsonArray.length(); i++) { 
+                        JSONObject tempItem = jsonArray.getJSONObject(i); 
+                        String tempStr = tempItem.getString("item_id");     
+                        String from_city = tempItem.getString("city");        
+                        Double from_city_price = tempItem.getDouble("sell_price_min");           
+                        String item_tier = tempStr.substring(0,2);  
+                        
+                        String item_name;
+                        String item_enchant = "";
 
-                                                   
+                        if(tempStr.endsWith("1") || tempStr.endsWith("2") || tempStr.endsWith("3") ||tempStr.endsWith("4")){
+                            item_name = tempStr.substring(3,tempStr.length()-2);
+                            item_enchant = tempStr.substring(tempStr.length()-2);
+                        }else{
+                            item_name = tempStr.substring(3);
+                        }
+                        tempVals.add(new Value(getItems_id_from_name(item_name, items), getCity_id_from_name(from_city, cities), getTier_id_from_name(item_tier, tiers), getEnchant_id_from_name(item_enchant, enchantments), from_city_price));        
+                        System.out.println("item_name: " + getItems_id_from_name(item_name, items)   + " " +  item_name + "\ncity: " +  getCity_id_from_name(from_city, cities)  + " " +  from_city + "\ntier : " + getTier_id_from_name(item_tier, tiers)  + " " +  item_tier + "\n enchant: " + getEnchant_id_from_name(item_enchant, enchantments)  + " " +  item_enchant + "\npreis: " + from_city_price);
+                    }
 
-                                        if(tempStr.endsWith("1") || tempStr.endsWith("2") || tempStr.endsWith("3") ||tempStr.endsWith("4")){
-                                            item_name = tempStr.substring(3,tempStr.length()-2);
-                                            item_enchant = tempStr.substring(tempStr.length()-2);
-                                        }else{
-                                            item_name = tempStr.substring(3);
-                                        }
-
-                                        
-                                        String item_tier = tempStr.substring(0,2);  
-                                        Double to_city_price = to_city_object.getDouble("buy_price_max");
-
-                                        Value value_to_add = new Value(getItems_id_from_name(item_name,items), getCity_id_from_name(from_city, cities) , getCity_id_from_name(to_city, cities), getTier_id_from_name(item_tier,tiers), getEnchant_id_from_name(item_enchant, enchantments), (to_city_price - from_city_price), from_city_price, to_city_price);
-                                        values.add(value_to_add);
-                                        //System.out.println("from city id: "+getCity_id_from_name(from_city,cities) + "\nto and from city name: "+ to_city + ", "+  from_city+"\nactual added object city id: "+value_to_add.getFrom_city_id());
-
-                                        PreparedStatement insert = null;
-                                        try {                                    
-                                            insert = conn.prepareStatement("INSERT INTO [Values] (items_id, from_city_id, to_city_id, tier_id, value, last_updated, rarity_id, buy_price, sell_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
-                                            insert.setString(1, Integer.toString(value_to_add.getItems_id()));
-                                            insert.setString(2, Integer.toString(value_to_add.getFrom_city_id()));
-                                            insert.setString(3, Integer.toString(value_to_add.getTo_city_id()));
-                                            insert.setString(4, Integer.toString(value_to_add.getTier_id()));
-                                            insert.setString(5, Double.toString(value_to_add.getValue()));
-                                            insert.setString(6, value_to_add.getLast_updated());
-                                            insert.setString(7, Integer.toString(value_to_add.getEnchant_id()));
-                                            insert.setString(8, Double.toString(value_to_add.getBuy_price()));
-                                            insert.setString(9, Double.toString(value_to_add.getSell_price()));
-                                            insert.executeUpdate();
-                                            //System.out.println("Successful INSERT!"+j+" "+i);
-                                        } catch (SQLException e) {
-                                            System.out.println("SQL Statement: "+ insert +"\nError: \n"+ e);
-                                        }
-                                    }
-                                }
+                    for (int i = 0; i < tempVals.size(); i++) {
+                        for (int j = 0; j < tempVals.size(); j++) {
+                            if (tempVals.get(i).getTier_id() == tempVals.get(j).getTier_id() && (tempVals.get(i).getFrom_city_id() == tempVals.get(j).getFrom_city_id()) && tempVals.get(i).getEnchant_id() == tempVals.get(j).getEnchant_id()){
+                                values_to_add.add(new Value(tempVals.get(i).getItems_id(), tempVals.get(i).getFrom_city_id(), tempVals.get(j).getFrom_city_id(), tempVals.get(i).getTier_id(), tempVals.get(i).getEnchant_id(), tempVals.get(j).getValue() - tempVals.get(i).getValue(), tempVals.get(i).getValue(), tempVals.get(j).getValue()));
+                                //System.out.println("item id: " + tempVals.get(i).getItems_id() + "\nfrom city id: " + tempVals.get(i).getFrom_city_id() + "\n to city id: " + tempVals.get(j).getFrom_city_id() + "\n tier city id: " + tempVals.get(i).getTier_id() + "\nenchant id: " + tempVals.get(i).getEnchant_id() + "\n value: " + (tempVals.get(j).getValue() - tempVals.get(i).getValue()) + "\n buy val: " + tempVals.get(i).getValue() + "\n sell val: " + tempVals.get(j).getValue());
                             }
                         }
-
                     }
+
+
+
+                    /*for (int i = 0; i < jsonArray.length(); i++) {      
+                        JSONObject from_city_object = jsonArray.getJSONObject(i);  
+                        String from_city = from_city_object.getString("city");
+                        Double from_city_price = from_city_object.getDouble("sell_price_min");
+
+                        for (int j = 0; j < jsonArray.length(); j++) {  
+                            JSONObject to_city_object = jsonArray.getJSONObject(j);
+                            String to_city = to_city_object.getString("city");     
+                            
+                            if (!from_city.equals(to_city)) {
+                                
+                                String tempStr = to_city_object.getString("item_id");
+                                String item_name;
+                                String item_enchant = "";
+
+                                if(tempStr.endsWith("1") || tempStr.endsWith("2") || tempStr.endsWith("3") ||tempStr.endsWith("4")){
+                                    item_name = tempStr.substring(3,tempStr.length()-2);
+                                    item_enchant = tempStr.substring(tempStr.length()-2);
+                                }else{
+                                    item_name = tempStr.substring(3);
+                                }
+                                
+                                String item_tier = tempStr.substring(0,2);  
+                                Double to_city_price = to_city_object.getDouble("sell_price_min");
+
+                                Value value_to_add = new Value(getItems_id_from_name(item_name,items), getCity_id_from_name(from_city, cities) , getCity_id_from_name(to_city, cities), getTier_id_from_name(item_tier,tiers), getEnchant_id_from_name(item_enchant, enchantments), (to_city_price - from_city_price), from_city_price, to_city_price);
+                                values.add(value_to_add);
+                                //System.out.println("from city id: "+getCity_id_from_name(from_city,cities) + "\nto and from city name: "+ to_city + ", "+  from_city+"\nactual added object city id: "+value_to_add.getFrom_city_id());
+*/
+                                PreparedStatement insert = null;
+                                try {                                  
+                                    for (Value value_to_add : values_to_add)  {
+                                        insert = conn.prepareStatement("INSERT INTO [Values] (items_id, from_city_id, to_city_id, tier_id, value, last_updated, rarity_id, buy_price, sell_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                                        insert.setString(1, Integer.toString(value_to_add.getItems_id()));
+                                        insert.setString(2, Integer.toString(value_to_add.getFrom_city_id()));
+                                        insert.setString(3, Integer.toString(value_to_add.getTo_city_id()));
+                                        insert.setString(4, Integer.toString(value_to_add.getTier_id()));
+                                        insert.setString(5, Double.toString(value_to_add.getValue()));
+                                        insert.setString(6, value_to_add.getLast_updated());
+                                        insert.setString(7, Integer.toString(value_to_add.getEnchant_id()));
+                                        insert.setString(8, Double.toString(value_to_add.getBuy_price()));
+                                        insert.setString(9, Double.toString(value_to_add.getSell_price()));
+                                        statementList.add(insert);
+                                    }
+                                } catch (SQLException e) {
+                                    System.out.println("SQL Statement: "+ insert +"\nError: \n"+ e);
+                                }
+                            //}
+                        //}
+                    }
+
+                    for ( PreparedStatement statement : statementList){
+                        try {
+                            statement.executeUpdate();
+                        } catch (SQLException e) {
+                            System.out.println("Fehler bei insert aufgetreten. Eventuelle Fehlermeldung: " + e + "\n" + statement);                            
+                        }
+                    }
+                    System.out.println(item.getDisplay_name() + " Updated");
                     item.set_is_completed(true);
                     try {
                         PreparedStatement update;
@@ -171,7 +211,7 @@ public class Main{
                         System.out.println(ex);
                     }
                 }
-            }
+           // }
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
             return;

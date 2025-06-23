@@ -7,7 +7,7 @@ public class Value{
     private int id;
     private final int items_id;
     private final int from_city_id;
-    private final int to_city_id;
+    private int to_city_id;
     private final int tier_id;
     private final int enchant_id;
     private double value;
@@ -39,6 +39,14 @@ public class Value{
         this.to_city_id = to_city_id;
         this.value = value;
         this.enchant_id = enchant_id;
+    }
+
+    public Value(int items_id, int from_city_id, int tier_id, int enchant_id, double value) {
+        this.items_id = items_id;
+        this.from_city_id = from_city_id;
+        this.tier_id = tier_id;
+        this.enchant_id = enchant_id;
+        this.value = value;
     }
 
     public int getId() {
